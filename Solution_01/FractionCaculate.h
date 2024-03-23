@@ -26,5 +26,8 @@ public:
 
 	static pair<int, int> CaculateEquation(string str);
 
+	static bool BigThan(pair<int, int> a, pair<int, int>b);
+
+
 	static string FractionToString(pair<int, int> a);
 };

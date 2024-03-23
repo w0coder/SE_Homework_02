@@ -6,6 +6,8 @@ const pair<int, int> FractionCaculate::identity = { 0,1 };
  int FractionCaculate::Gcd(int a, int b)
  {
 	if (b == 0)return 0;
+	a = a < 0 ? -a : a;
+	b = b < 0 ? -b : b;
 	int t;
 	while (t = a % b)
 	{
@@ -17,7 +19,7 @@ const pair<int, int> FractionCaculate::identity = { 0,1 };
 
 int FractionCaculate::Lcm(int a, int b)
 {
-	return a * b / Gcd(a, b);
+	return  a * b / Gcd(a, b);
 }
 
 pair<int, int> FractionCaculate::FractionAdd(pair<int, int> a, pair<int, int> b)
@@ -166,6 +168,11 @@ pair<int, int> FractionCaculate::CaculateEquation(string str)
 		res = FractionAdd(res, top);
 	}
 	return res;
+}
+
+bool FractionCaculate::BigThan(pair<int, int> a, pair<int, int> b)
+{
+	return a.first / a.second > b.first / b.second;
 }
 
 string FractionCaculate::FractionToString(pair<int, int> a)
