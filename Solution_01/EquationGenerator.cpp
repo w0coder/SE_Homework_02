@@ -16,154 +16,42 @@ public:
 		ops = { "+","-","×","÷" };
 	}
 
-	vector<pair<int, int>> GetAnsers()
+	vector<string> GetAnsers()
 	{
-
+		vector<string> res;
+		for (auto str2vec : ans2EquaMap)
+			for (auto eq : str2vec.second)
+				res.push_back(str2vec.first);
+		return res;
 	}
 
 	vector<string> GetEquations()
 	{
-
+		vector<string>res;
+		for (auto str2vec : ans2EquaMap)
+			for (auto eq : str2vec.second)
+				res.push_back(eq);
+		return res;
 	}
 
 	void GenerateEquation(int n = 10, int maxVal = 1000)
 	{
-
-
+		for (int i = 0; i < n; i++)
+		{
+			int cnt = rand() % 3 + 1;
+			pair<int, int>res = FractionCaculate::identity;
+			string val = GenerateOneEquation(cnt, maxVal, res);
+			string key = FractionCaculate::FractionToString(res);
+			if (ans2EquaMap.find(key) == ans2EquaMap.end())
+			{
+				vector<string> vec;
+				ans2EquaMap[key] = vec;
+			}
+			ans2EquaMap[key].push_back(val);
+		}
 	}
 
-	/*string GenerateOneEquation_1(int opCnt, int maxVal, pair<int, int>& outRes)
-	{
-		if (opCnt <= 0 || maxVal == 0)return "";
-		string res = "";
-		string op;
-		stack<pair<int, int>> nums;
-		int j = 1;
-		pair<int, int> val = FractionCaculate::identity, pre = FractionCaculate::identity;
-		val.first = rand() % maxVal;
-		res += to_string(val.first);
-		nums.push(val);
-		while (opCnt)
-		{
-			op = ops[rand() % ops.size()];
-			j = 1;
-			if (op == "-")
-			{
-				pre = nums.top();
-				int t = pre.first / pre.second;
-				if (t > maxVal) t = maxVal;
-				if (rand() % 2 == 0)
-				{
-					j = rand() % opCnt;
-					string s = GenerateOneEquation(j, t, val);
-					if (s == "")continue;
-					res += " " + op + " (" + s + ")";
-				}
-				else if (t)
-				{
-					val.first = rand() % t;
-					res += " " + op + " " + to_string(val.first);
-				}
-				else continue;
-				val.first *= -1;
-				nums.push(val);
-			}
-			else if (op == "÷")
-			{
-				pre = nums.top();
-				int t = maxVal - pre.first;
-				if (t <= 0)
-				{
-					op = ops[rand() % ops.size()];
-					continue;
-				}
-				if (rand() % 2 == 0)
-				{
-					j = rand() % opCnt;
-					string s = GenerateOneEquation(j, t, val);
-					if (s == "")continue;
-					if (val.first == 0)continue;
-					res += " " + op + " (" + s + ")";
-				}
-				else
-				{
-					val.first = rand() % t + pre.first;
-					if (val.first <= 0)continue;
-					res += " " + op + " " + to_string(val.first);
-				}
-				nums.pop();
-				nums.push(FractionCaculate::FractionDivid(pre, val));
-			}
-			else if (op == "×")
-			{
-				pre = nums.top();
-				if (rand() % 2 == 0)
-				{
-					j = rand() % opCnt;
-					string s = GenerateOneEquation(j, maxVal, val);
-					if (s == "")continue;
-					res += " " + op + " (" + s + ")";
-				}
-				else
-				{
-					val.first = rand() % maxVal;
-					res += " " + op + " " + to_string(val.first);
-				}
-				nums.pop();
-				nums.push(FractionCaculate::FractionMulti(pre, val));
-			}
-			else
-			{
-				if (rand() % 2 == 0)
-				{
-					j = rand() % opCnt;
-					string s = GenerateOneEquation(j, maxVal, val);
-					if (s == "")continue;
-					res += " " + op + " (" + s + ")";
-				}
-				else
-				{
-					val.first = rand() % maxVal;
-					res += " " + op + " " + to_string(val.first);
-				}
-				nums.push(val);
-			}
-
-			opCnt -= j;
-		}
-
-		outRes = FractionCaculate::identity;
-		while (!nums.empty())
-		{
-			pre = nums.top();
-			nums.pop();
-			outRes = FractionCaculate::FractionAdd(pre, outRes);
-		}
-		return res;
-	}*/
-	
-	bool GetMinusVal(const pair<int, int>& pre, pair<int, int>&val, int maxVal)
-	{
-		int t = pre.first / pre.second;
-		if (t > maxVal) t = maxVal;
-		if (t <= 0)return false;
-		val.first = rand() % t;
-		return true;
-	}
-
-	bool GetDividVal(const pair<int, int>& pre, pair<int, int>&val, int maxVal)
-	{
-		int t = maxVal - pre.first;
-		if (t <= 0)
-		{
-			return false;
-		}
-		val.first = rand() % t + pre.first;
-		if (val.first <= 0)return false;
-		return true;
-	}
-
-	string Gen_1(int opCnt, int max, pair<int, int>&outRes)
+	string GenerateOneEquation(int opCnt, int max, pair<int, int>&outRes)
 	{
 		int opcnt = opCnt;
 
@@ -183,7 +71,8 @@ public:
 		return Generate_1(opcnt, max, outRes.first, "+", true, outRes.second);
 	}
 
-	string Generate_1(int& opCnt, int max, int target,string preOp,bool flag,int denominator)		//left : false   right : true
+private:
+	string Generate_1(int& opCnt, int max, int target, string preOp, bool flag, int denominator)		//flag -->> left=false right=true , target is the pair's first 
 	{
 		if (opCnt <= 0)
 		{
@@ -200,7 +89,7 @@ public:
 				op = ops[rand() % ops.size()];
 			}
 		}
-		
+
 		int ta, tb;
 		if (op == "-")
 		{
@@ -234,12 +123,22 @@ public:
 				rate++;
 			}
 		}
-		
+
 		--opCnt;
-		string right = Generate_1(opCnt , max, tb, op, true, 1);
-		string left = Generate_1(opCnt , max, ta, op, false, 1);
+		string right, left;
+		if (rand() % 2)			//递归顺序导致括号偏向，左右先的概率均等以平衡
+		{
+			right = Generate_1(opCnt, max, tb, op, true, 1);
+			left = Generate_1(opCnt, max, ta, op, false, 1);
+		}
+		else
+		{
+			left = Generate_1(opCnt, max, ta, op, false, 1);
+			right = Generate_1(opCnt, max, tb, op, true, 1);
+		}
 		
 		string res = left + " " + op + " " + right;
+		//处理加括号（可优化）
 		if (preOp == "×")
 		{
 			if (op == "+" || op == "-")res = "(" + res + ")";
@@ -251,132 +150,14 @@ public:
 		}
 		else if (preOp == "-")
 		{
-			if((op=="+"||op=="-")&&flag)res = "(" + res + ")";
+			if ((op == "+" || op == "-") && flag)res = "(" + res + ")";
 		}
 		return res;
 	}
 
-
-	string GenerateOneEquation(int opCnt, int maxVal, pair<int, int>& outRes)
-	{
-		if (opCnt < 0 || maxVal == 0)return "";
-		if (opCnt==0)
-		{
-			outRes = { rand() % maxVal,1 };
-			return to_string(outRes.first);
-		}
-		if (rand() % 3 == 0)
-		{
-			return GenProcess(opCnt, maxVal, outRes);
-		}
-		string res = "";
-		string op;
-		stack<pair<int, int>> nums;
-		int j = 1;
-		pair<int, int> val = FractionCaculate::identity, pre = FractionCaculate::identity;
-		val.first = rand() % maxVal;
-		res += to_string(val.first);
-		nums.push(val);
-		while (opCnt)
-		{
-			op = ops[rand() % ops.size()];
-			if (op == "-")
-			{
-				pre = nums.top();
-				if (!GetMinusVal(pre, val, maxVal))continue;
-
-				res += " " + op + " " + to_string(val.first);
-				val.first *= -1;
-				nums.push(val);
-			}
-			else if (op == "+")
-			{
-				val.first = rand() % maxVal;
-				res += " " + op + " " + to_string(val.first);
-				nums.push(val);
-			}
-			else if (op == "÷")
-			{
-				pre = nums.top();
-				if (!GetDividVal(pre, val, maxVal))continue;
-				if (val.first == 0)continue;
-				res += " " + op + " " + to_string(val.first);
-				nums.pop();
-				nums.push(FractionCaculate::FractionDivid(pre, val));
-			}
-			else if (op == "×")
-			{
-				pre = nums.top();
-				val.first = rand() % maxVal;
-				res += " " + op + " " + to_string(val.first);
-
-				nums.pop();
-				nums.push(FractionCaculate::FractionMulti(pre, val));
-			}
-			
-
-			opCnt -= 1;
-		}
-
-		outRes = FractionCaculate::identity;
-		while (!nums.empty())
-		{
-			pre = nums.top();
-			nums.pop();
-			outRes = FractionCaculate::FractionAdd(pre, outRes);
-		}
-		return res;
-	}
-
-	string GenProcess(int opCnt, int maxVal, pair<int, int>& outRes)
-	{
-		if (opCnt <= 0)return "";
-		int subOpCnt = 0;
-		if (rand() % 2 && opCnt>1)
-		{
-			subOpCnt = rand() % (--opCnt) + 1;
-		}
-		opCnt -= (subOpCnt);
-		pair<int, int> res = FractionCaculate::identity, subRes = FractionCaculate::identity;
-
-
-		string s = GenerateOneEquation(opCnt, maxVal, res);
-		if (opCnt >= 1&&subOpCnt)
-		{
-			s = "(" + s + ")";
-		}
-		if (subOpCnt)
-		{
-			string subEquation = '(' + GenerateOneEquation(subOpCnt, maxVal, subRes) + ')';
-
-			string op = ops[rand() % ops.size()];
-
-			if (FractionCaculate::BigThan(res, subRes))
-			{
-				if (op == "-")
-				{
-					s = s + " " + op + " " + subEquation;
-					outRes = FractionCaculate::FractionMinus(res, subRes);
-				}
-				else 
-				{
-					s = subEquation + " " + op + " " + s;
-					outRes = FractionCaculate::FractionMinus(subRes, res);
-				}
-			}
-			if (subRes.first == 0 || res.first==0)
-				while (op == "÷")
-					op = ops[rand() % ops.size()];
-			else s = s + " " + op + " " + subEquation;
-		}
-		return s;
-	}
-
-
-private:
 	vector<string> ops;
 
-	unordered_map<string, string> ans2EquaMap;
+	unordered_map<string, vector<string>> ans2EquaMap;
 };
 
 
@@ -387,13 +168,15 @@ int main()
 	pair<int, int>res = FractionCaculate::identity;
 	EquationGenerator g = EquationGenerator();
 
-	for (int i = 0; i < 10000; i++)
-	{
-		cout << "------" << i << "------" << endl;
-		string s = g.Gen_1(3 , 100, res);
-		//if (s[s.size() - 1] == ')')
-			cout << s << endl;
-		cout << FractionCaculate::FractionToString(FractionCaculate::CaculateEquation(s)) << endl;
-	}
+
+	//for (int i = 0; i < 10000; i++)
+	//{
+	//	cout << "------" << i << "------" << endl;
+	//	string s = g.GenerateOneEquation(3 , 100, res);
+	//	//if (s[s.size() - 1] == ')')
+	//		cout << s << endl;
+	//	cout << FractionCaculate::FractionToString(FractionCaculate::CaculateEquation(s)) << endl;
+	//}
+
 	return 0;
 }
