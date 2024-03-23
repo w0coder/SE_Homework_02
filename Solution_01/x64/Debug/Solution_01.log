@@ -1,4 +1,4 @@
 ﻿  EquationGenerator.cpp
 C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\Solution_01\FractionCaculate.h(30,2): warning C4091: “static ”: 没有声明变量时忽略“FractionCaculate”的左侧
-C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\Solution_01\EquationGenerator.cpp(231,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\Solution_01\EquationGenerator.cpp(247,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
   Solution_01.vcxproj -> C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\x64\Debug\Solution_01.exe
