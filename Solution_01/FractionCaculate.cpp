@@ -82,7 +82,7 @@ pair<int, int> FractionCaculate::StringToFraction(string str)
 	if (idx != -1)
 	{
 		res.first = stoi(str.substr(0, idx));
-		res.second = stoi(str.substr(idx + 1, str.size() - 1 - idx));
+		res.second = stoi(str.substr(idx + 2, str.size() - 1 - idx));
 	}
 	else
 	{

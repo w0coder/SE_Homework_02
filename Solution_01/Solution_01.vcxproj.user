@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>-n 100 -r 200 -e aa -a cc</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-n 10000 -r 500 -e $(SolutionDir)\x64\Debug\exercisesfile.txt -a $(SolutionDir)\x64\Debug\answerfile.txt</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

@@ -1,4 +1,6 @@
 ﻿  Main.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\concepts(13): warning STL4038: The contents of <concepts> are available only with C++20 concepts support.
 C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\Solution_01\FractionCaculate.h(32,2): warning C4091: “static ”: 没有声明变量时忽略“FractionCaculate”的左侧
-C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\Solution_01\Main.cpp(73,31): warning C4129: “G”: 不可识别的字符转义序列
+C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\Solution_01\Main.cpp(40,15): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\Solution_01\Main.cpp(289,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
   Solution_01.vcxproj -> C:\Users\wwwz\Desktop\Code\Other\SE_Homework_02\x64\Debug\Solution_01.exe

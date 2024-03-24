@@ -1,50 +1,148 @@
 #include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <concepts>
 #include "FractionCaculate.h"
 #include "EquationGenerator.h"
 using namespace std;
+
+bool ReadStringsToVector(string path, vector<string>& vec)
+{
+	fstream file;
+	file.open(path, ios::in);
+	if (!file.is_open())
+	{
+		cout << "[error] open " << path << " failed" << endl;
+		return false;
+	}
+	string s;
+	while (getline(file, s))
+	{
+		vec.push_back(s);
+	}
+	file.close();
+	return true;
+}
+
+bool ReadStringsToUnorderedMap(string path, unordered_map<string, string>& map)
+{
+	fstream file;
+	file.open(path, ios::in);
+	if (!file.is_open())
+	{
+		cout << "[error] open " << path << " failed" << endl;
+		return false;
+	}
+	string s, key, value;
+	int idx;
+	while (getline(file, s))
+	{
+		idx = s.find(". ");
+		if (idx == string::npos)continue;
+		key = s.substr(0, idx);
+		value = s.substr(idx + 2, s.size() - idx - 1);
+		map[key] = value;
+	}
+	file.close();
+	return true;
+}
+
+bool WriteGradToTxt(string path, vector<int>right, vector<int>wrong)
+{
+	fstream file;
+	file.open(path, ios::out);
+	if (!file.is_open())
+	{
+		cout << "[error] open " << path << " failed" << endl;
+		return false;
+	}
+
+	size_t len = right.size();
+	file << "Correct: " << len << " (";
+	for (size_t i = 0; i < len - 1; i++)
+	{
+		file << right[i] << ", ";
+	}
+	file << right[len - 1] << ")" << endl;
+
+	len = wrong.size();
+	file << "Wrong: " << len << " (";
+	for (size_t i = 0; i < len - 1; i++)
+	{
+		file << wrong[i] << ", ";
+	}
+	file << wrong[len - 1] << ")" << endl;
+	file.close();
+	return true;
+}
+
+bool WriteStringVectorToTxt(string path, vector<string>vec)
+{
+	fstream file;
+	file.open(path, ios::out);
+	if (!file.is_open())
+	{
+		cout << "[error] open " << path << " failed" << endl;
+		return false;
+	}
+	size_t len = vec.size();
+	for (size_t i = 0; i < len; i++)
+	{
+		file << i + 1 << ". " << vec[i] << endl;
+	}
+	file.close();
+	return true;
+}
 
 bool DoGenerate(int n, int maxVal, string exePath)
 {
 	EquationGenerator* gen = new EquationGenerator();
 	vector<string>ans, exp;
 
-	//++++ 式子和答案存储的路径
 	string excSavePath = exePath + "\\Exercises.txt";
 	string ansSavePath = exePath + "\\Answers.txt";
 
 	gen->GenerateEquation(n, maxVal);
-	
+
 	exp = gen->GetEquations();				//式子和答案的列表
 	ans = gen->GetAnsers();
-
+	delete gen;
 	//---BEG TEST PART---
-	for (int i = 0; i < exp.size(); i++)
+	/*for (int i = 0; i < exp.size(); i++)
 	{
 		cout << "_____________________________________" << i + 1 << endl;
 		cout << exp[i] << " = " << ans[i] << endl;
 		cout << "Caculate by fractionCaculate class ans = " << FractionCaculate::FractionToString(FractionCaculate::CaculateEquation(exp[i])) << endl;
 	}
 	cout << "exc = " << excSavePath << endl;
-	cout << "ans = " << ansSavePath << endl;
+	cout << "ans = " << ansSavePath << endl;*/
 	//---END TEST PART---
-	 
-	 
-	
-	//**** 遍历列表，将表中的值存到对应的文件中，注意存文件时需求中是否要编号
-	//***  文件操作失败时，需要输出 error，并给出提示
-	//***  保存好后，输出提示保存的位置
 
-	delete gen;
+	// 文件操作失败时，需要输出 error，并给出提示
+	// 保存好后，输出提示保存的位置
+	if (WriteStringVectorToTxt(excSavePath, exp))
+	{
+		cout << "[success] exercises have been saved to " << excSavePath << endl;
+	}
+	else
+	{
+		cout << "[error] failed save exercises to " << excSavePath << endl;
+		return false;
+	}
+	if (WriteStringVectorToTxt(ansSavePath, ans))
+	{
+		cout << "[success] ansers have been saved to " << ansSavePath << endl;
+	}
+	else
+	{
+		cout << "[error] failed save answers to " << ansSavePath << endl;
+		return false;
+	}
 	return true;
 }
 
 bool DoCheckAnswer(string excPath, string ansPath, string exePath)
 {
-	//---BEG TEST PART---
-	cout << "Cexc = " << excPath << endl;
-	cout << "Cans = " << ansPath << endl;
-	//---END TEST PART---
-
 	if (excPath == "")
 	{
 		cout << "[error] -e <exercisefile>.txt the path of the exercise shoud not be empty" << endl;
@@ -55,24 +153,42 @@ bool DoCheckAnswer(string excPath, string ansPath, string exePath)
 		cout << "[error] -e <answerfile>.txt the path of the answer shoud not be empty" << endl;
 		return false;
 	}
-	vector<string>excs, anss;					//存放练习和要批改的答案的两个列表
+	unordered_map<string, string> excs, anss;		//存放练习和要批改的答案的两个列表
 
-	//**** 读取相应的信息到这两个表中，注意，答案中可能会空题（有可能那题的序号没写，有可能那题写了序号没写答案），此时需要将该题的答案设置为""存入表中
-
-
-	
-	vector<int> wrongIdx, rightIdx;				//存放正确题目索引和错误题目索引的两个列表
-	for (int i = 0; i < excs.size(); i++)		//统计正确和错误的题目
+	// 读取相应的信息到这两个表中
+	if (!ReadStringsToUnorderedMap(excPath, excs))
 	{
-		if (anss[i] == "")wrongIdx.push_back(i + 1);
-		else if (FractionCaculate::FractionToString(FractionCaculate::CaculateEquation(excs[i])) == anss[i])rightIdx.push_back(i + 1);
-		else wrongIdx.push_back(i + 1);
+		cout << "[error] failed to read " << excPath << endl;
+		return false;
+	}
+	if (!ReadStringsToUnorderedMap(ansPath, anss))
+	{
+		cout << "[error] failed to read " << ansPath << endl;
+		return false;
 	}
 
-	//++++ 批改结果的写入路径
-	string gradePath = exePath + "\Grade.txt";
-	//**** 把批改的结果写入文件
-	//***  写入成功后，输出提示写入的位置
+
+	vector<int> wrongIdx, rightIdx;					//存放正确题目索引和错误题目索引的两个列表
+	int j = 0;
+	for (auto exc : excs)		//统计正确和错误的题目
+	{
+
+		if (anss.find(exc.first) == anss.end())			//根本就没写这题
+		{
+			wrongIdx.push_back(stoi(exc.first));
+			continue;
+		}
+		else if (FractionCaculate::FractionToString(FractionCaculate::CaculateEquation(exc.second)) == anss[exc.first])		//写对了
+			rightIdx.push_back(stoi(exc.first));
+		else wrongIdx.push_back(stoi(exc.first));
+	}
+	sort(wrongIdx.begin(), wrongIdx.end());
+	sort(rightIdx.begin(), rightIdx.end());
+
+	string gradePath = exePath + "\\Grade.txt";
+	if (WriteGradToTxt(gradePath, rightIdx, wrongIdx))
+		cout << "[success] grade have been saved to " << gradePath << endl;
+	else return false;
 
 	return true;
 }
@@ -80,15 +196,14 @@ bool DoCheckAnswer(string excPath, string ansPath, string exePath)
 int HandlerInput(int argc, char* argv[])
 {
 	string exePath = argv[0];
-	exePath = exePath.substr(0,exePath.find_last_of('\\'));		//获取 .exe 文件的路径
-
+	exePath = exePath.substr(0, exePath.find_last_of('\\'));		//获取 .exe 文件的路径
 
 	int i = 1, n = 20, maxVal = 200;
 	int op = 0;								//简单的 2 进制枚举  1：生成操作	2：批改作业操作
 	string excPath = "", ansPath = "";
 	while (i < argc)
 	{
-		if (argv[i][0] != '-'|| i + 1 >= argc)
+		if (argv[i][0] != '-' || i + 1 >= argc)
 		{
 			i++;
 			continue;
@@ -136,11 +251,7 @@ int HandlerInput(int argc, char* argv[])
 		}
 		i += 2;
 	}
-	//---BEG TEST PART---
-	cout << "op = " << op << endl;
-	//---END TEST PART---
 
-	
 	while (op)								//依据之前读取到的参数得到的操作符，经行相应的操作
 	{
 		int subOp = op & ((~(op)) + 1);		//取出 op 中的最后一个二进制 1
@@ -163,7 +274,7 @@ int HandlerInput(int argc, char* argv[])
 				cout << "[error] Check answers in " << ansPath << "of exercises in " << excPath << " failed" << endl;
 				return -1;
 			}
-			break;	
+			break;
 		}
 		default:
 			break;
@@ -175,18 +286,6 @@ int HandlerInput(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-	HandlerInput(argc, argv);
-	/*
-	EquationGenerator* gen = new EquationGenerator();
-	if (gen->GenerateEquation(n) == false)
-	{
-		cout << "the n is too big but the max is to small" << endl;
-		return -1;
-	}
-	vector<string>ans, exp;
-	exp = gen->GetEquations();
-	ans = gen->GetAnsers();
-	*/
-	
-	return 0;
+	srand(time(0));
+	return HandlerInput(argc, argv);
 }
