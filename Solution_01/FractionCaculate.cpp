@@ -1,6 +1,5 @@
 #include "FractionCaculate.h"
 
-
 const pair<int, int> FractionCaculate::identity = { 0,1 };
 
  int FractionCaculate::Gcd(int a, int b)
@@ -79,7 +78,7 @@ pair<int, int> FractionCaculate::StringToFraction(string str)
 {
 	if (str == "")return identity;
 	pair<int, int> res;
-	int idx = str.find('/');
+	size_t idx = str.find('/');
 	if (idx != -1)
 	{
 		res.first = stoi(str.substr(0, idx));
@@ -99,7 +98,7 @@ pair<int, int> FractionCaculate::CaculateEquation(string str)
 	string s, op = "+";
 	pair<int, int>cur = identity, pre = identity;
 	bool flag = false;
-	int len = str.size();
+	size_t len = str.size();
 	char c;
 	for (int i = 0; i < len; i++)
 	{
@@ -180,4 +179,3 @@ string FractionCaculate::FractionToString(pair<int, int> a)
 	if (a.first % a.second == 0)return to_string(a.first);
 	return to_string(a.first) + "/" + to_string(a.second);
 }
-

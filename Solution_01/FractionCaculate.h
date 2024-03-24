@@ -28,6 +28,5 @@ public:
 
 	static bool BigThan(pair<int, int> a, pair<int, int>b);
 
-
 	static string FractionToString(pair<int, int> a);
 };
