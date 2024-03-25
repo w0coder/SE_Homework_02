@@ -6,17 +6,17 @@
 #include "EquationGenerator.h"
 using namespace std;
 
-bool ReadStringsToVector(string path, vector<string>& vec)
+bool ReadStringsToVector(string path, vector<string>& vec)			//将txt文件中的每行存到列表中
 {
 	fstream file;
 	file.open(path, ios::in);
-	if (!file.is_open())
+	if (!file.is_open())											//文件打开失败
 	{
 		cout << "[error] open " << path << " failed" << endl;
 		return false;
 	}
 	string s;
-	while (getline(file, s))
+	while (getline(file, s))				//读取每一行并存到vec中
 	{
 		vec.push_back(s);
 	}
@@ -24,18 +24,18 @@ bool ReadStringsToVector(string path, vector<string>& vec)
 	return true;
 }
 
-bool ReadStringsToUnorderedMap(string path, unordered_map<string, string>& map)
+bool ReadStringsToUnorderedMap(string path, unordered_map<string, string>& map)			//专用于处理规定格式的带行号的txt（练习.txt，答案.txt)
 {
 	fstream file;
 	file.open(path, ios::in);
-	if (!file.is_open())
+	if (!file.is_open())					
 	{
 		cout << "[error] open " << path << " failed" << endl;
 		return false;
 	}
 	string s, key, value;
 	int idx;
-	while (getline(file, s))
+	while (getline(file, s))				//读取每一行，并对序号进行处理，注意序号在 ". " 前
 	{
 		idx = s.find(". ");
 		if (idx == string::npos)continue;
@@ -47,7 +47,7 @@ bool ReadStringsToUnorderedMap(string path, unordered_map<string, string>& map)
 	return true;
 }
 
-bool WriteGradToTxt(string path, vector<int>right, vector<int>wrong)
+bool WriteGradToTxt(string path, vector<int>right, vector<int>wrong)					//写批改结果的函数
 {
 	fstream file;
 	file.open(path, ios::out);
@@ -57,7 +57,7 @@ bool WriteGradToTxt(string path, vector<int>right, vector<int>wrong)
 		return false;
 	}
 
-	size_t len = right.size();
+	size_t len = right.size();						//按格式写入正确的题目
 	file << "Correct: " << len << " (";
 	for (size_t i = 0; i < len - 1; i++)
 	{
@@ -65,7 +65,7 @@ bool WriteGradToTxt(string path, vector<int>right, vector<int>wrong)
 	}
 	file << right[len - 1] << ")" << endl;
 
-	len = wrong.size();
+	len = wrong.size();								//按格式写入错误的题目
 	file << "Wrong: " << len << " (";
 	for (size_t i = 0; i < len - 1; i++)
 	{
@@ -76,7 +76,7 @@ bool WriteGradToTxt(string path, vector<int>right, vector<int>wrong)
 	return true;
 }
 
-bool WriteStringVectorToTxt(string path, vector<string>vec)
+bool WriteStringVectorToTxt(string path, vector<string>vec)			//将 vec 中的字符串写入文本，并按格式标号
 {
 	fstream file;
 	file.open(path, ios::out);
@@ -88,43 +88,37 @@ bool WriteStringVectorToTxt(string path, vector<string>vec)
 	size_t len = vec.size();
 	for (size_t i = 0; i < len; i++)
 	{
-		file << i + 1 << ". " << vec[i] << endl;
+		file << i + 1 << ". " << vec[i] << endl;	//标号，写入字符串
 	}
 	file.close();
 	return true;
 }
 
-bool DoGenerate(int n, int maxVal, string exePath)
+bool DoGenerate(int n, int maxVal, string exePath)					//执行生成操作
 {
 	EquationGenerator* gen = new EquationGenerator();
 	vector<string>ans, exp;
 
-	string excSavePath = exePath + "\\Exercises.txt";
+	string excSavePath = exePath + "\\Exercises.txt";				//练习和答案存放的位置
 	string ansSavePath = exePath + "\\Answers.txt";
 
-	gen->GenerateEquation(n, maxVal);
+	if (gen->GenerateEquation(n, maxVal) == false)		//生成式子
+	{
+		cout << "[error] failed generate equations" << endl;
+		return false;
+	}	
 
 	exp = gen->GetEquations();				//式子和答案的列表
 	ans = gen->GetAnsers();
 	delete gen;
-	//---BEG TEST PART---
-	/*for (int i = 0; i < exp.size(); i++)
-	{
-		cout << "_____________________________________" << i + 1 << endl;
-		cout << exp[i] << " = " << ans[i] << endl;
-		cout << "Caculate by fractionCaculate class ans = " << FractionCaculate::FractionToString(FractionCaculate::CaculateEquation(exp[i])) << endl;
-	}
-	cout << "exc = " << excSavePath << endl;
-	cout << "ans = " << ansSavePath << endl;*/
-	//---END TEST PART---
 
-	// 文件操作失败时，需要输出 error，并给出提示
-	// 保存好后，输出提示保存的位置
-	if (WriteStringVectorToTxt(excSavePath, exp))
+	
+	
+	if (WriteStringVectorToTxt(excSavePath, exp))		// 保存好后，输出提示保存的位置
 	{
 		cout << "[success] exercises have been saved to " << excSavePath << endl;
 	}
-	else
+	else												// 文件操作失败时，需要输出 error，并给出提示
 	{
 		cout << "[error] failed save exercises to " << excSavePath << endl;
 		return false;
@@ -170,10 +164,10 @@ bool DoCheckAnswer(string excPath, string ansPath, string exePath)
 
 	vector<int> wrongIdx, rightIdx;					//存放正确题目索引和错误题目索引的两个列表
 	int j = 0;
-	for (auto exc : excs)		//统计正确和错误的题目
+	for (auto exc : excs)							//统计正确和错误的题目
 	{
 
-		if (anss.find(exc.first) == anss.end())			//根本就没写这题
+		if (anss.find(exc.first) == anss.end())		//根本就没写这题
 		{
 			wrongIdx.push_back(stoi(exc.first));
 			continue;
@@ -182,11 +176,11 @@ bool DoCheckAnswer(string excPath, string ansPath, string exePath)
 			rightIdx.push_back(stoi(exc.first));
 		else wrongIdx.push_back(stoi(exc.first));
 	}
-	sort(wrongIdx.begin(), wrongIdx.end());
+	sort(wrongIdx.begin(), wrongIdx.end());			//哈希表处理的，顺序会乱
 	sort(rightIdx.begin(), rightIdx.end());
 
 	string gradePath = exePath + "\\Grade.txt";
-	if (WriteGradToTxt(gradePath, rightIdx, wrongIdx))
+	if (WriteGradToTxt(gradePath, rightIdx, wrongIdx))			//将批改结果写入相关文件
 		cout << "[success] grade have been saved to " << gradePath << endl;
 	else return false;
 
@@ -201,7 +195,7 @@ int HandlerInput(int argc, char* argv[])
 	int i = 1, n = 20, maxVal = 200;
 	int op = 0;								//简单的 2 进制枚举  1：生成操作	2：批改作业操作
 	string excPath = "", ansPath = "";
-	while (i < argc)
+	while (i < argc)						//输入参数处理
 	{
 		if (argv[i][0] != '-' || i + 1 >= argc)
 		{
@@ -211,7 +205,7 @@ int HandlerInput(int argc, char* argv[])
 
 		switch (argv[i][1])
 		{
-		case 'n':		//设置生成数
+		case 'n':		//设置生成数，此处说明需要进行生成操作
 		{
 			if (maxVal < 0)
 			{
@@ -222,7 +216,7 @@ int HandlerInput(int argc, char* argv[])
 			n = atoi(argv[i + 1]);
 			break;
 		}
-		case 'r':		//设置最大值
+		case 'r':		//设置最大值，此处说明需要进行生成操作
 		{
 			if (maxVal <= 0)
 			{
@@ -233,14 +227,14 @@ int HandlerInput(int argc, char* argv[])
 			maxVal = atoi(argv[i + 1]);
 			break;
 		}
-		//读取文件
-		case 'e':
+		
+		case 'e':		//读取练习文件，此处说明需要进行批改操作
 		{
 			excPath = argv[i + 1];
 			op |= 2;	//加上批改作业操作
 			break;
 		}
-		case 'a':
+		case 'a':		//读取答案文件，此处说明需要进行批改操作
 		{
 			ansPath = argv[i + 1];
 			op |= 2;	//加上批改作业操作
