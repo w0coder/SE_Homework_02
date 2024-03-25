@@ -57,7 +57,7 @@ string EquationGenerator::GenerateOneEquation(int opCnt, int max, pair<int, int>
 	{
 		outRes.second = rand() % (max - 1) + 1;
 		outRes = FractionCaculate::FractionDivid({ outRes.first,1 }, { outRes.second,1 });
-		if (outRes.second != 1 && outRes.first > outRes.second)		//½»»»
+		if (outRes.second != 1 && outRes.first > outRes.second)			//½»»»
 		{
 			outRes.first ^= outRes.second;
 			outRes.second ^= outRes.first;

@@ -5,6 +5,7 @@ const pair<int, int> FractionCaculate::identity = { 0,1 };
  int FractionCaculate::Gcd(int a, int b)
  {
 	if (b == 0)return 0;
+	int sign = (a > 0 && b > 0) || (a < 0 && b < 0) ? 1 : -1;
 	a = a < 0 ? -a : a;
 	b = b < 0 ? -b : b;
 	int t;
@@ -13,7 +14,7 @@ const pair<int, int> FractionCaculate::identity = { 0,1 };
 		a = b;
 		b = t;
 	}
-	return b;
+	return b * sign;
 }
 
 int FractionCaculate::Lcm(int a, int b)
@@ -31,6 +32,11 @@ pair<int, int> FractionCaculate::FractionAdd(pair<int, int> a, pair<int, int> b)
 
 	res.first /= g;
 	res.second /= g;
+	if (res.second < 0)
+	{
+		res.first *= -1;
+		res.second *= -1;
+	}
 	return res;
 }
 
@@ -44,6 +50,11 @@ pair<int, int> FractionCaculate::FractionMinus(pair<int, int> a, pair<int, int> 
 
 	res.first /= g;
 	res.second /= g;
+	if (res.second < 0)
+	{
+		res.first *= -1;
+		res.second *= -1;
+	}
 	return res;
 }
 
@@ -55,6 +66,11 @@ pair<int, int> FractionCaculate::FractionMulti(pair<int, int> a, pair<int, int> 
 	int g = Gcd(res.first, res.second);
 	res.first /= g;
 	res.second /= g;
+	if (res.second < 0)
+	{
+		res.first *= -1;
+		res.second *= -1;
+	}
 	return res;
 }
 
@@ -66,6 +82,11 @@ pair<int, int> FractionCaculate::FractionDivid(pair<int, int> a, pair<int, int> 
 	int g = Gcd(res.first, res.second);
 	res.first /= g;
 	res.second /= g;
+	if (res.second < 0)
+	{
+		res.first *= -1;
+		res.second *= -1;
+	}
 	return res;
 }
 

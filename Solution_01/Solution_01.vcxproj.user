@@ -4,4 +4,8 @@
     <LocalDebuggerCommandArguments>-n 10000 -r 500 -e $(SolutionDir)\x64\Debug\exercisesfile.txt -a $(SolutionDir)\x64\Debug\answerfile.txt</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>-n 10000 -r 500 -e $(SolutionDir)\x64\Release\exercisesfile.txt -a $(SolutionDir)\x64\Release\answerfile.txt</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>
